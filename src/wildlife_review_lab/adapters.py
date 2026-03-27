@@ -31,7 +31,10 @@ def build_dfne_review_rows(reports_dir: Path) -> list[dict[str, Any]]:
             {
                 "source_system": "deepfaune_new_england",
                 "relative_clip_path": str(payload.get("relative_clip_path", "")),
-                "camera_name": str(payload.get("camera_name", "")),
+                "camera_name": str(
+                    payload.get("camera_name")
+                    or Path(str(payload.get("relative_clip_path", ""))).parent.name
+                ),
                 "report_status": str(payload.get("status", "")),
                 "predicted_label": str(payload.get("top_prediction") or ""),
                 "prediction_confidence": payload.get("top_prediction_confidence", ""),

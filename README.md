@@ -42,6 +42,7 @@ The scaffold currently includes:
 - a first-class review manifest generator for DeepFaune New England clip reports
 - a review summary command for labeled CSV manifests
 - tests for the core review/validation flow
+- minimal example artifacts based on one real local dog clip
 
 ## Quickstart
 
@@ -70,6 +71,11 @@ Current first-class source adapter:
 
 - `deepfaune_new_england`
 
+Example artifacts:
+
+- [examples/deepfaune_single_dog_review_manifest.csv](/home/joel/wildlife_review_lab/examples/deepfaune_single_dog_review_manifest.csv)
+- [examples/deepfaune_single_dog_review_summary.json](/home/joel/wildlife_review_lab/examples/deepfaune_single_dog_review_summary.json)
+
 Summarize a reviewed manifest:
 
 ```bash
@@ -79,3 +85,5 @@ wildlife-review-lab summarize --input review_manifest.csv --output review_summar
 ## Positioning
 
 This project is not a model repository. It is a workflow and evidence layer for people using wildlife AI in practice.
+
+The included dog example is a minimal proof-of-work case only. It shows how one real local clip can move through manifest generation and reviewed-summary reporting. It is not a meaningful validation dataset, and it does not capture missed events or recall limits from upstream clip generation systems such as Frigate.

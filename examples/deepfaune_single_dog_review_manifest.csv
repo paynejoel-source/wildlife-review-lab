@@ -1,0 +1,2 @@
+source_system,relative_clip_path,camera_name,report_status,predicted_label,prediction_confidence,candidate_labels,animal_detection_count,human_present,vehicle_present,reviewed_label,review_status,notes
+deepfaune_new_england,1774554137.0-1774554147.016992.mp4,output,success,Domestic Dog,0.9946834444999695,Domestic Dog,5,False,True,Domestic Dog,confirmed,Single real local dog clip used as a proof-of-work example only

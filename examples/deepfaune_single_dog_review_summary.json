@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-03-27T22:30:00+00:00",
+  "total_cases": 1,
+  "status_counts": {
+    "confirmed": 1
+  },
+  "agreement_counts": {
+    "match": 1
+  },
+  "agreement_rate": 1.0,
+  "camera_counts": {
+    "output": 1
+  },
+  "mismatch_pairs": {},
+  "confidence_bucket_counts": {
+    ">=0.90": 1
+  },
+  "camera_reviewed_counts": {
+    "output": 1
+  },
+  "camera_mismatch_counts": {},
+  "camera_error_rates": {
+    "output": 0.0
+  },
+  "contamination_counts": {
+    "vehicle_present": 1
+  },
+  "mismatches": []
+}
