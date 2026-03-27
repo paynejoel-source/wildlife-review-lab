@@ -39,7 +39,7 @@ The scaffold currently includes:
 
 - a minimal Python package
 - a CLI
-- a review manifest generator for DeepFaune-style clip reports
+- a first-class review manifest generator for DeepFaune New England clip reports
 - a review summary command for labeled CSV manifests
 - tests for the core review/validation flow
 
@@ -65,6 +65,10 @@ Generate a review manifest from report JSON files:
 ```bash
 wildlife-review-lab ingest-reports --reports-dir /path/to/reports --output review_manifest.csv
 ```
+
+Current first-class source adapter:
+
+- `deepfaune_new_england`
 
 Summarize a reviewed manifest:
 

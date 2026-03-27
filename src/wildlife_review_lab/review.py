@@ -7,16 +7,33 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from wildlife_review_lab.adapters import build_dfne_review_rows
+
 
 REVIEW_FIELDS = [
+    "source_system",
     "relative_clip_path",
     "camera_name",
+    "report_status",
     "predicted_label",
     "prediction_confidence",
+    "candidate_labels",
+    "animal_detection_count",
+    "human_present",
+    "vehicle_present",
     "reviewed_label",
     "review_status",
     "notes",
 ]
+
+REVIEW_STATUSES = {
+    "pending",
+    "confirmed",
+    "rejected",
+    "uncertain",
+    "needs_second_review",
+    "not_reviewable",
+}
 
 
 def normalize_label(value: str | None) -> str:
@@ -33,35 +50,10 @@ def write_review_template(destination: Path) -> Path:
     return destination
 
 
-def iter_report_payloads(reports_dir: Path) -> list[dict[str, Any]]:
-    payloads: list[dict[str, Any]] = []
-    for path in sorted(reports_dir.rglob("*.json")):
-        if any(part in {"hourly", "state", "review", "camtrap_dp", "validation"} for part in path.parts):
-            continue
-        try:
-            payload = json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        if {"relative_clip_path", "camera_name"}.issubset(payload.keys()):
-            payloads.append(payload)
-    return payloads
-
-
-def build_review_manifest_rows(reports_dir: Path) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    for payload in iter_report_payloads(reports_dir):
-        rows.append(
-            {
-                "relative_clip_path": str(payload.get("relative_clip_path", "")),
-                "camera_name": str(payload.get("camera_name", "")),
-                "predicted_label": str(payload.get("top_prediction") or ""),
-                "prediction_confidence": payload.get("top_prediction_confidence", ""),
-                "reviewed_label": "",
-                "review_status": "pending",
-                "notes": "",
-            }
-        )
-    return rows
+def build_review_manifest_rows(reports_dir: Path, source_system: str = "deepfaune_new_england") -> list[dict[str, Any]]:
+    if source_system != "deepfaune_new_england":
+        raise ValueError(f"Unsupported source system: {source_system}")
+    return build_dfne_review_rows(reports_dir)
 
 
 def write_review_manifest(rows: list[dict[str, Any]], destination: Path) -> Path:
@@ -84,10 +76,13 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
     status_counts: Counter[str] = Counter()
     agreement_counts: Counter[str] = Counter()
     camera_counts: Counter[str] = Counter()
+    mismatch_pairs: Counter[str] = Counter()
     mismatches: list[dict[str, str]] = []
 
     for row in rows:
         review_status = row.get("review_status", "").strip() or "pending"
+        if review_status not in REVIEW_STATUSES:
+            review_status = "pending"
         status_counts[review_status] += 1
         camera_counts[row.get("camera_name", "").strip() or "unknown"] += 1
 
@@ -99,6 +94,7 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
             agreement = "match"
         else:
             agreement = "mismatch"
+            mismatch_pairs[f"{predicted or 'none'}->{reviewed or 'none'}"] += 1
             mismatches.append(row)
         agreement_counts[agreement] += 1
 
@@ -112,6 +108,7 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
         "agreement_counts": dict(agreement_counts),
         "agreement_rate": round(agreement_rate, 6),
         "camera_counts": dict(camera_counts),
+        "mismatch_pairs": dict(mismatch_pairs),
         "mismatches": mismatches,
     }
 

@@ -29,6 +29,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ingest_parser.add_argument("--reports-dir", required=True, help="Directory containing report JSON files.")
     ingest_parser.add_argument("--output", required=True, help="Destination CSV path.")
+    ingest_parser.add_argument(
+        "--source-system",
+        default="deepfaune_new_england",
+        help="Source report format to ingest. Currently supported: deepfaune_new_england",
+    )
 
     summarize_parser = subparsers.add_parser(
         "summarize",
@@ -50,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "ingest-reports":
-        rows = build_review_manifest_rows(Path(args.reports_dir))
+        rows = build_review_manifest_rows(Path(args.reports_dir), source_system=args.source_system)
         destination = write_review_manifest(rows, Path(args.output))
         print(f"Wrote review manifest: {destination}")
         return 0

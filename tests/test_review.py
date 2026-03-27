@@ -31,17 +31,24 @@ class ReviewTests(unittest.TestCase):
             reports_dir = Path(temp_dir) / "reports"
             reports_dir.mkdir(parents=True, exist_ok=True)
             payload = {
+                "status": "success",
                 "relative_clip_path": "previews/back_yard/example.mp4",
                 "camera_name": "back_yard",
                 "top_prediction": "white_tailed_deer",
                 "top_prediction_confidence": 0.93,
+                "species_counts": {"white_tailed_deer": 2, "bobcat": 1},
+                "animal_detection_count": 2,
+                "human_present": False,
+                "vehicle_present": False,
             }
             (reports_dir / "example.json").write_text(json.dumps(payload), encoding="utf-8")
 
             rows = build_review_manifest_rows(reports_dir)
 
             self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["source_system"], "deepfaune_new_england")
             self.assertEqual(rows[0]["predicted_label"], "white_tailed_deer")
+            self.assertEqual(rows[0]["candidate_labels"], "white_tailed_deer;bobcat")
             self.assertEqual(rows[0]["review_status"], "pending")
 
     def test_summarize_review_manifest(self) -> None:
@@ -72,6 +79,7 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(summary["agreement_counts"]["match"], 1)
         self.assertEqual(summary["agreement_counts"]["mismatch"], 1)
         self.assertEqual(summary["agreement_rate"], 0.5)
+        self.assertEqual(summary["mismatch_pairs"]["bobcat->domestic_cat"], 1)
 
     def test_write_and_load_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -79,9 +87,15 @@ class ReviewTests(unittest.TestCase):
             rows = [
                 {
                     "relative_clip_path": "a.mp4",
+                    "source_system": "deepfaune_new_england",
                     "camera_name": "back_yard",
+                    "report_status": "success",
                     "predicted_label": "white_tailed_deer",
                     "prediction_confidence": 0.93,
+                    "candidate_labels": "white_tailed_deer",
+                    "animal_detection_count": 1,
+                    "human_present": False,
+                    "vehicle_present": False,
                     "reviewed_label": "",
                     "review_status": "pending",
                     "notes": "",
