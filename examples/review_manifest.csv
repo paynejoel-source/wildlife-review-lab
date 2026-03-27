@@ -1,0 +1,3 @@
+relative_clip_path,camera_name,predicted_label,prediction_confidence,reviewed_label,review_status,notes
+previews/back_yard/example1.mp4,back_yard,white_tailed_deer,0.93,white_tailed_deer,confirmed,
+previews/back_yard/example2.mp4,back_yard,bobcat,0.61,domestic_cat,rejected,Needs human review for feline confusion

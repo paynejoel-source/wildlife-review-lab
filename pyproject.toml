@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wildlife-review-lab"
+version = "0.1.0"
+description = "Review and validation toolkit scaffold for wildlife AI outputs"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Joel Payne", email = "payne.joel@gmail.com" }
+]
+dependencies = []
+
+[project.scripts]
+wildlife-review-lab = "wildlife_review_lab.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
