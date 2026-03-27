@@ -58,6 +58,8 @@ class ReviewTests(unittest.TestCase):
                 "camera_name": "back_yard",
                 "predicted_label": "white_tailed_deer",
                 "prediction_confidence": "0.93",
+                "human_present": "False",
+                "vehicle_present": "False",
                 "reviewed_label": "white_tailed_deer",
                 "review_status": "confirmed",
                 "notes": "",
@@ -67,6 +69,8 @@ class ReviewTests(unittest.TestCase):
                 "camera_name": "front_yard",
                 "predicted_label": "bobcat",
                 "prediction_confidence": "0.61",
+                "human_present": "True",
+                "vehicle_present": "False",
                 "reviewed_label": "domestic_cat",
                 "review_status": "rejected",
                 "notes": "",
@@ -80,6 +84,10 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(summary["agreement_counts"]["mismatch"], 1)
         self.assertEqual(summary["agreement_rate"], 0.5)
         self.assertEqual(summary["mismatch_pairs"]["bobcat->domestic_cat"], 1)
+        self.assertEqual(summary["confidence_bucket_counts"][">=0.90"], 1)
+        self.assertEqual(summary["confidence_bucket_counts"]["0.50-0.74"], 1)
+        self.assertEqual(summary["camera_error_rates"]["front_yard"], 1.0)
+        self.assertEqual(summary["contamination_counts"]["human_present"], 1)
 
     def test_write_and_load_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

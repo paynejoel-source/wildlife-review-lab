@@ -36,6 +36,27 @@ REVIEW_STATUSES = {
 }
 
 
+def parse_confidence(value: str | float | int | None) -> float | None:
+    if value in ("", None):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def confidence_bucket(value: float | None) -> str:
+    if value is None:
+        return "unknown"
+    if value < 0.5:
+        return "<0.50"
+    if value < 0.75:
+        return "0.50-0.74"
+    if value < 0.9:
+        return "0.75-0.89"
+    return ">=0.90"
+
+
 def normalize_label(value: str | None) -> str:
     if value is None:
         return ""
@@ -77,6 +98,10 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
     agreement_counts: Counter[str] = Counter()
     camera_counts: Counter[str] = Counter()
     mismatch_pairs: Counter[str] = Counter()
+    confidence_bucket_counts: Counter[str] = Counter()
+    camera_mismatch_counts: Counter[str] = Counter()
+    camera_reviewed_counts: Counter[str] = Counter()
+    contamination_counts: Counter[str] = Counter()
     mismatches: list[dict[str, str]] = []
 
     for row in rows:
@@ -84,7 +109,16 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
         if review_status not in REVIEW_STATUSES:
             review_status = "pending"
         status_counts[review_status] += 1
-        camera_counts[row.get("camera_name", "").strip() or "unknown"] += 1
+        camera_name = row.get("camera_name", "").strip() or "unknown"
+        camera_counts[camera_name] += 1
+
+        confidence = parse_confidence(row.get("prediction_confidence"))
+        confidence_bucket_counts[confidence_bucket(confidence)] += 1
+
+        if str(row.get("human_present", "")).strip().lower() == "true":
+            contamination_counts["human_present"] += 1
+        if str(row.get("vehicle_present", "")).strip().lower() == "true":
+            contamination_counts["vehicle_present"] += 1
 
         predicted = normalize_label(row.get("predicted_label"))
         reviewed = normalize_label(row.get("reviewed_label"))
@@ -92,14 +126,22 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
             agreement = "unreviewed"
         elif predicted == reviewed:
             agreement = "match"
+            camera_reviewed_counts[camera_name] += 1
         else:
             agreement = "mismatch"
             mismatch_pairs[f"{predicted or 'none'}->{reviewed or 'none'}"] += 1
+            camera_reviewed_counts[camera_name] += 1
+            camera_mismatch_counts[camera_name] += 1
             mismatches.append(row)
         agreement_counts[agreement] += 1
 
     reviewed_total = agreement_counts.get("match", 0) + agreement_counts.get("mismatch", 0)
     agreement_rate = (agreement_counts.get("match", 0) / reviewed_total) if reviewed_total else 0.0
+    camera_error_rates = {
+        camera: round(camera_mismatch_counts[camera] / reviewed_count, 6)
+        for camera, reviewed_count in camera_reviewed_counts.items()
+        if reviewed_count
+    }
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -109,6 +151,11 @@ def summarize_review_manifest(rows: list[dict[str, str]]) -> dict[str, Any]:
         "agreement_rate": round(agreement_rate, 6),
         "camera_counts": dict(camera_counts),
         "mismatch_pairs": dict(mismatch_pairs),
+        "confidence_bucket_counts": dict(confidence_bucket_counts),
+        "camera_reviewed_counts": dict(camera_reviewed_counts),
+        "camera_mismatch_counts": dict(camera_mismatch_counts),
+        "camera_error_rates": camera_error_rates,
+        "contamination_counts": dict(contamination_counts),
         "mismatches": mismatches,
     }
 
