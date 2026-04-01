@@ -8,13 +8,31 @@ version = "0.1.0"
 description = "Review and validation toolkit scaffold for wildlife AI outputs"
 readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "MIT"}
 authors = [
   { name = "paynejoel-source" }
 ]
 dependencies = []
+keywords = ["wildlife", "validation", "review", "human-in-the-loop", "camera-traps"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
 
 [project.scripts]
 wildlife-review-lab = "wildlife_review_lab.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/paynejoel-source/wildlife-review-lab"
+Repository = "https://github.com/paynejoel-source/wildlife-review-lab"
+Issues = "https://github.com/paynejoel-source/wildlife-review-lab/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

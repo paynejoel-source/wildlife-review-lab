@@ -1,6 +1,6 @@
 # Wildlife Review Lab
 
-Credit:
+Credit split:
 
 - repository design, implementation, and maintenance: `paynejoel-source`
 
@@ -28,6 +28,8 @@ Most wildlife AI projects stop at prediction. The harder and more important hole
 - learning where a model fails at a real site
 
 This repository is meant to fill that gap.
+
+This repository is publishable both as a public GitHub project and as a Python package/release artifact.
 
 ## Planned Scope
 
@@ -57,6 +59,12 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
+```
+
+Package-style install from the repo root:
+
+```bash
+python -m pip install .
 ```
 
 Generate a blank review template:
@@ -91,3 +99,9 @@ wildlife-review-lab summarize --input review_manifest.csv --output review_summar
 This project is not a model repository. It is a workflow and evidence layer for people using wildlife AI in practice.
 
 The included dog example is a minimal proof-of-work case only. It shows how one real local clip can move through manifest generation and reviewed-summary reporting. It is not a meaningful validation dataset, and it does not capture missed events or recall limits from upstream clip generation systems such as Frigate.
+
+## Publishing
+
+This repository includes Python package metadata in `pyproject.toml` and a GitHub Actions workflow for PyPI trusted publishing:
+
+- `.github/workflows/publish-pypi.yml`
