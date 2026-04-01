@@ -5,9 +5,7 @@ version: "0.1.0"
 date-released: 2026-03-27
 type: software
 authors:
-  - family-names: Payne
-    given-names: Joel
-    email: payne.joel@gmail.com
+  - name: paynejoel-source
 repository-code: "https://github.com/paynejoel-source/wildlife-review-lab"
 url: "https://github.com/paynejoel-source/wildlife-review-lab"
 license: MIT
