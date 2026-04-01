@@ -1,5 +1,9 @@
 # Wildlife Review Lab
 
+Credit:
+
+- repository design, implementation, and maintenance: `paynejoel-source`
+
 Independent toolkit scaffold for the biggest missing gap in wildlife AI workflows:
 
 - human review of model outputs
