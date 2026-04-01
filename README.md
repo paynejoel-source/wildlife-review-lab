@@ -73,8 +73,8 @@ Current first-class source adapter:
 
 Example artifacts:
 
-- [examples/deepfaune_single_dog_review_manifest.csv](/home/joel/wildlife_review_lab/examples/deepfaune_single_dog_review_manifest.csv)
-- [examples/deepfaune_single_dog_review_summary.json](/home/joel/wildlife_review_lab/examples/deepfaune_single_dog_review_summary.json)
+- [examples/deepfaune_single_dog_review_manifest.csv](examples/deepfaune_single_dog_review_manifest.csv)
+- [examples/deepfaune_single_dog_review_summary.json](examples/deepfaune_single_dog_review_summary.json)
 
 Summarize a reviewed manifest:
 
